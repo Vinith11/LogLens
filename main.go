@@ -1,13 +1,18 @@
 package main
 
-import "github.com/gin-gonic/gin"
+import (
+	"loglens/api"
+
+	"github.com/gin-gonic/gin"
+)
 
 func main() {
+	// Initialize Gin router
 	r := gin.Default()
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "ponggggggggggggg",
-		})
-	})
-	r.Run(":8080")
+
+	// Register routes
+	api.RegisterRoutes(r)
+
+	// Start the server
+	r.Run(":8080") // Runs on localhost:8080
 }
