@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LogLens - Dashboard</title>
+    <link rel="stylesheet" href="/static/index.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <h1>LogLens</h1>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="nav-item active">
+                        <a href="">
+                            <span class="icon">⊞</span>
+                            <span class="label">Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/static/pages/containers.html">
+                            <span class="icon">⊡</span>
+                            <span class="label">Containers</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/static/pages/images.html">
+                            <span class="icon">⊟</span>
+                            <span class="label">Images</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/static/pages/volumes.html">
+                            <span class="icon">⊠</span>
+                            <span class="label">Volumes</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/static/pages/settings.html">
+                            <span class="icon">⚙</span>
+                            <span class="label">Settings</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <h1 class="page-title">Dashboard</h1>
+
+            <div class="dashboard-grid">
+                <!-- Total Containers Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Total Containers</h2>
+                        <span class="icon">⊡</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="metric">3</div>
+                    </div>
+                </div>
+
+                <!-- Running Containers Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Running Containers</h2>
+                        <span class="icon">⚙</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="metric">2</div>
+                    </div>
+                </div>
+
+                <!-- CPU Usage Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>CPU Usage</h2>
+                        <span class="icon">⚙</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="metric">45%</div>
+                        <div class="progress-bar">
+                            <div class="progress" style="width: 45%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Memory Usage Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Memory Usage</h2>
+                        <span class="icon">⊟</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="metric">60%</div>
+                        <div class="progress-bar">
+                            <div class="progress" style="width: 60%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Running Containers Section -->
+            <section class="running-containers">
+                <h2>Running Containers</h2>
+                <div class="container-grid">
+                    <!-- Container 1 -->
+                    <div class="container-card">
+                        <div class="container-header">
+                            <h3>wonderful_wozniak</h3>
+                            <p class="container-image">nginx:latest</p>
+                        </div>
+                        <div class="container-footer">
+                            <span class="status running">running</span>
+                            <span class="ports">80/tcp, 443/tcp</span>
+                        </div>
+                    </div>
+
+                    <!-- Container 2 -->
+                    <div class="container-card">
+                        <div class="container-header">
+                            <h3>focused_feynman</h3>
+                            <p class="container-image">redis:latest</p>
+                        </div>
+                        <div class="container-footer">
+                            <span class="status running">running</span>
+                            <span class="ports">6379/tcp</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

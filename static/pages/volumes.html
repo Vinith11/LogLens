@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LogLens - Volumes</title>
+    <link rel="stylesheet" href="/static/index.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <h1>LogLens</h1>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="nav-item">
+                        <a href="dashboard.html">
+                            <span class="icon">⊞</span>
+                            <span class="label">Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="containers.html">
+                            <span class="icon">⊡</span>
+                            <span class="label">Containers</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="images.html">
+                            <span class="icon">⊟</span>
+                            <span class="label">Images</span>
+                        </a>
+                    </li>
+                    <li class="nav-item active">
+                        <a href="volumes.html">
+                            <span class="icon">⊠</span>
+                            <span class="label">Volumes</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="settings.html">
+                            <span class="icon">⚙</span>
+                            <span class="label">Settings</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <h1 class="page-title">Volumes</h1>
+
+            <!-- Volumes Grid -->
+            <div class="volumes-grid">
+                <!-- Volume 1 -->
+                <div class="volume-card">
+                    <div class="volume-header">
+                        <h3>postgres_data</h3>
+                        <p class="volume-meta">Created 3 days ago</p>
+                    </div>
+                    <div class="volume-details">
+                        <p class="volume-driver">Driver: local</p>
+                        <p class="volume-mount">Mountpoint: /var/lib/docker/volumes/postgres_data/_data</p>
+                    </div>
+                    <div class="volume-footer">
+                        <p class="volume-usage">Used by: postgres-container</p>
+                    </div>
+                </div>
+
+                <!-- Volume 2 -->
+                <div class="volume-card">
+                    <div class="volume-header">
+                        <h3>nginx_config</h3>
+                        <p class="volume-meta">Created 2 days ago</p>
+                    </div>
+                    <div class="volume-details">
+                        <p class="volume-driver">Driver: local</p>
+                        <p class="volume-mount">Mountpoint: /var/lib/docker/volumes/nginx_config/_data</p>
+                    </div>
+                    <div class="volume-footer">
+                        <p class="volume-usage">Used by: wonderful_wozniak</p>
+                    </div>
+                </div>
+
+                <!-- Volume 3 -->
+                <div class="volume-card">
+                    <div class="volume-header">
+                        <h3>app_logs</h3>
+                        <p class="volume-meta">Created 4 days ago</p>
+                    </div>
+                    <div class="volume-details">
+                        <p class="volume-driver">Driver: local</p>
+                        <p class="volume-mount">Mountpoint: /var/lib/docker/volumes/app_logs/_data</p>
+                    </div>
+                    <div class="volume-footer">
+                        <p class="volume-usage">Used by: node-app, nginx-proxy</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/volumes.js"></script>
+</body>
+</html>

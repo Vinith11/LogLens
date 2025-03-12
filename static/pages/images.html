@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LogLens - Images</title>
+    <link rel="stylesheet" href="/static/index.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <h1>LogLens</h1>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="nav-item">
+                        <a href="dashboard.html">
+                            <span class="icon">⊞</span>
+                            <span class="label">Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="containers.html">
+                            <span class="icon">⊡</span>
+                            <span class="label">Containers</span>
+                        </a>
+                    </li>
+                    <li class="nav-item active">
+                        <a href="images.html">
+                            <span class="icon">⊟</span>
+                            <span class="label">Images</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="volumes.html">
+                            <span class="icon">⊠</span>
+                            <span class="label">Volumes</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="settings.html">
+                            <span class="icon">⚙</span>
+                            <span class="label">Settings</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <h1 class="page-title">Images</h1>
+
+            <!-- Images Grid -->
+            <div class="images-grid">
+                <!-- Image 1 -->
+                <div class="image-card">
+                    <div class="image-header">
+                        <h3>nginx:latest</h3>
+                        <p class="image-meta">Created 2 days ago</p>
+                    </div>
+                    <div class="image-details">
+                        <p class="image-size">Size: 133MB</p>
+                    </div>
+                </div>
+
+                <!-- Image 2 -->
+                <div class="image-card">
+                    <div class="image-header">
+                        <h3>node:14</h3>
+                        <p class="image-meta">Created 1 week ago</p>
+                    </div>
+                    <div class="image-details">
+                        <p class="image-size">Size: 943MB</p>
+                    </div>
+                </div>
+
+                <!-- Image 3 -->
+                <div class="image-card">
+                    <div class="image-header">
+                        <h3>postgres:13</h3>
+                        <p class="image-meta">Created 3 days ago</p>
+                    </div>
+                    <div class="image-details">
+                        <p class="image-size">Size: 314MB</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/images.js"></script>
+</body>
+</html>
