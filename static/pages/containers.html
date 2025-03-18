@@ -40,7 +40,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="">
+                        <a href="settings.html">
                             <span class="icon">⚙</span>
                             <span class="label">Settings</span>
                         </a>
@@ -55,9 +55,9 @@
 
             <!-- Filter Tabs -->
             <div class="filter-tabs">
-                <button class="tab-button active" data-filter="all">All</button>
-                <button class="tab-button" data-filter="running">Running</button>
-                <button class="tab-button" data-filter="stopped">Stopped</button>
+                <button class="tab-button active" data-filter="all" onclick="switchTab('all', this)">All</button>
+                <button class="tab-button" data-filter="running" onclick="switchTab('running', this)">Running</button>
+                <button class="tab-button" data-filter="stopped" onclick="switchTab('stopped', this)">Stopped</button>
             </div>
 
             <!-- Containers Grid -->

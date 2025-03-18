@@ -9,9 +9,7 @@ import (
 // RegisterRoutes registers all the routes for the application
 func RegisterRoutes(r *gin.Engine) {
 	// Route for fetch all containers
-	r.GET("/containers-all", handlers.GetAllContainers)
-	r.GET("/containers-running", handlers.GetRunningContainers)
-	r.GET("/containers-stopped", handlers.GetStoppedContainers)
+	r.GET("/containers", handlers.GetContainers)
 
 	// Route for container by ID
 	r.GET("/container/:id", handlers.GetContainerByID)
@@ -30,5 +28,8 @@ func RegisterRoutes(r *gin.Engine) {
 
 	// Route for docker compose
 	r.GET("/docker-compose", handlers.GetDockerCompose)
+
+	// Route for dashboard
+	r.GET("/dashboard", handlers.Dashboard)
 
 }
