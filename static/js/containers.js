@@ -59,6 +59,10 @@ function createContainerCard(container) {
     card.className = 'container-card';
     card.setAttribute('data-status', container.State.toLowerCase());
     
+    // Set container ID as a data attribute
+    const containerId = container.ID;
+    card.setAttribute('data-container-id', containerId);
+    
     const containerName = container.Names && container.Names.length > 0 
         ? container.Names[0].replace('/', '') 
         : container.ID;
@@ -73,6 +77,14 @@ function createContainerCard(container) {
             <span class="container-id">${container.ID}</span>
         </div>
     `;
+    
+    // Add click event listener to redirect to container details page
+    card.addEventListener('click', function() {
+        window.location.href = `container.html?id=${containerId}`;
+    });
+    
+    // Add cursor pointer to indicate it's clickable
+    card.style.cursor = 'pointer';
     
     return card;
 }

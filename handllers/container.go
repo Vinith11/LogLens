@@ -4,9 +4,14 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"strconv"
+	"strings"
+	"sort"
+	"github.com/docker/go-connections/nat"
+	"time"
 
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/client"
@@ -28,16 +33,19 @@ func GetContainerByID(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to inspect container"})
 		return
 	}
+	fmt.Println(containerJSON)
 
-	var containerDetails []map[string]interface{}
-	containerDetails = append(containerDetails, map[string]interface{}{
-		"ID":    containerJSON.ID[:12],
-		"Image": containerJSON.Image,
-		"Name":  containerJSON.Name,
-		"State": containerJSON.State.Status,
-	})
+	
+	containerDetails := make(map[string]string)
+	containerDetails["ID"] = containerJSON.ID
+	containerDetails["Created"] = FormatCreatedTime(containerJSON.Created)
+	containerDetails["Image"] = containerJSON.Config.Image
+	containerDetails["Status"] = containerJSON.State.Status
+	containerDetails["Ports"] = FormatPorts(containerJSON.NetworkSettings.Ports)
 
-	c.JSON(http.StatusOK, gin.H{"container": containerDetails})
+
+
+	c.JSON(http.StatusOK, containerDetails)
 }
 
 func StartContainer(c *gin.Context) {
@@ -168,6 +176,7 @@ func GetContainerLogs(c *gin.Context) {
 	// Write the cleaned logs to the response
 	c.Writer.Header().Set("Content-Type", "text/plain")
 	c.Writer.Write(cleanLogs)
+
 }
 
 func GetContainerStats(c *gin.Context) {
@@ -209,3 +218,78 @@ func GetContainerStats(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
+// FormatPorts converts Docker's port mapping structure to a human-readable format
+func FormatPorts(ports nat.PortMap) string {
+	if len(ports) == 0 {
+		return ""
+	}
+
+	var formattedPorts []string
+
+	// Sort the ports to ensure consistent output
+	var sortedPorts []string
+	for port := range ports {
+		sortedPorts = append(sortedPorts, string(port))
+	}
+	sort.Strings(sortedPorts)
+
+	for _, portKey := range sortedPorts {
+		port := nat.Port(portKey)
+		bindings := ports[port]
+
+		// For ports with bindings (published ports)
+		if len(bindings) > 0 {
+			for _, binding := range bindings {
+				hostIP := binding.HostIP
+				if hostIP == "" {
+					hostIP = "0.0.0.0"
+				}
+				formattedPorts = append(formattedPorts, 
+					fmt.Sprintf("%s:%s->%s", hostIP, binding.HostPort, port))
+			}
+		} else {
+			// For exposed ports without bindings
+			formattedPorts = append(formattedPorts, string(port))
+		}
+	}
+
+	return strings.Join(formattedPorts, ", ")
+}
+
+// FormatCreatedTime converts Docker's timestamp to a human-readable format
+func FormatCreatedTime(timestamp string) string {
+	// Parse the Docker timestamp
+	t, err := time.Parse(time.RFC3339Nano, timestamp)
+	if err != nil {
+		// If parsing fails, return the original timestamp
+		return timestamp
+	}
+
+	// Calculate time difference from now
+	duration := time.Since(t)
+
+	// Format based on duration
+	if duration < time.Minute {
+		return "Just now"
+	} else if duration < time.Hour {
+		minutes := int(duration.Minutes())
+		if minutes == 1 {
+			return "1 minute ago"
+		}
+		return fmt.Sprintf("%d minutes ago", minutes)
+	} else if duration < 24*time.Hour {
+		hours := int(duration.Hours())
+		if hours == 1 {
+			return "1 hour ago"
+		}
+		return fmt.Sprintf("%d hours ago", hours)
+	} else if duration < 48*time.Hour {
+		return "Yesterday"
+	} else if duration < 7*24*time.Hour {
+		days := int(duration.Hours() / 24)
+		return fmt.Sprintf("%d days ago", days)
+	} else {
+		// For older containers, show the actual date
+		return t.Format("Jan 2, 2006 at 3:04 PM")
+	}
+}
