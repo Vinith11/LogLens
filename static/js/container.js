@@ -166,6 +166,8 @@ document.addEventListener("DOMContentLoaded", function () {
           }
         });
 
+        logsContainer.scrollTop = logsContainer.scrollHeight;
+
         currentLogPage = page;
         isLoadingMoreLogs = false;
       })
@@ -202,6 +204,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Setup tab switching
   // In the setupTabSwitching function
+  // Add this to your setupTabSwitching function
   function setupTabSwitching() {
     const tabButtons = document.querySelectorAll(".container-tabs .tab-button");
 
@@ -214,6 +217,14 @@ document.addEventListener("DOMContentLoaded", function () {
           // Always fetch logs when logs tab is clicked
           fetchContainerLogs();
           setupLogScrolling();
+
+          // Wait a bit for the content to load then scroll to bottom
+          setTimeout(() => {
+            const logsContainer = document.querySelector(".container-logs");
+            if (logsContainer) {
+              logsContainer.scrollTop = logsContainer.scrollHeight;
+            }
+          }, 100);
         } else if (tabId === "stats") {
           // We would fetch stats here in a real implementation
           console.log("Stats tab clicked - would fetch stats data");

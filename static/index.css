@@ -463,7 +463,6 @@ body {
 .container-details .detail-value {
     flex: 1;
 }
-
 /* Logs Tab */
 .container-logs {
     background-color: #000;
@@ -471,6 +470,8 @@ body {
     padding: 15px;
     max-height: 400px;
     overflow-y: auto;
+    display: flex;
+    flex-direction: column-reverse; /* This makes newer logs appear at the bottom */
 }
 
 .container-logs .log-entry {
