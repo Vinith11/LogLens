@@ -122,17 +122,14 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // Fetch container logs
+  // Fetch initial container logs
   function fetchContainerLogs(page = 1) {
     const logsContent = document.getElementById("logs-content");
 
-    if (page === 1) {
-      logsContent.innerHTML = '<div class="loading">Loading logs...</div>';
-    }
-
+    logsContent.innerHTML = '<div class="loading">Loading logs...</div>';
     isLoadingMoreLogs = true;
 
-    fetch(`/container-logs/${containerId}?page=${page}`)
+    fetch(`/container-logs/${containerId}?page=${page}&direction=newest`)
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
@@ -140,22 +137,17 @@ document.addEventListener("DOMContentLoaded", function () {
         return response.text();
       })
       .then((data) => {
-        if (page === 1) {
-          logsContent.innerHTML = '<div class="container-logs"></div>';
-        }
-
+        logsContent.innerHTML = '<div class="container-logs"></div>';
         const logsContainer = logsContent.querySelector(".container-logs");
 
         if (!data || data.length === 0) {
-          if (page === 1) {
-            logsContainer.innerHTML =
-              '<div class="no-logs">No logs available</div>';
-          }
+          logsContainer.innerHTML =
+            '<div class="no-logs">No logs available</div>';
           hasMoreLogs = false;
           return;
         }
 
-        // Split logs by new lines and append them correctly
+        // Split logs by new lines and add them
         const logLines = data.split("\n");
         logLines.forEach((log) => {
           if (log.trim().length > 0) {
@@ -166,6 +158,7 @@ document.addEventListener("DOMContentLoaded", function () {
           }
         });
 
+        // Scroll to the bottom to show newest logs first
         logsContainer.scrollTop = logsContainer.scrollHeight;
 
         currentLogPage = page;
@@ -173,33 +166,103 @@ document.addEventListener("DOMContentLoaded", function () {
       })
       .catch((error) => {
         console.error("Error fetching container logs:", error);
-        if (page === 1) {
-          logsContent.innerHTML = `<div class="error">Failed to load logs: ${error.message}</div>`;
-        }
+        logsContent.innerHTML = `<div class="error">Failed to load logs: ${error.message}</div>`;
         isLoadingMoreLogs = false;
       });
   }
 
-  // Setup scroll event for infinite scrolling of logs
+  // Setup scroll event for infinite scrolling of logs (older logs on scroll up)
   function setupLogScrolling() {
     const logsContent = document.getElementById("logs-content");
 
     if (logsContent) {
       logsContent.addEventListener("scroll", function () {
-        // Check if we're near the bottom of the scrollable area
-        if (
-          logsContent.scrollHeight -
-            logsContent.scrollTop -
-            logsContent.clientHeight <
-          50
-        ) {
+        // Check if we're near the top of the scrollable area
+        if (logsContent.scrollTop < 50) {
           // If we're not already loading and there might be more logs
           if (!isLoadingMoreLogs && hasMoreLogs) {
-            fetchContainerLogs(currentLogPage + 1);
+            // Remember current scroll height and position before loading more content
+            const prevScrollHeight = logsContent.scrollHeight;
+
+            // Load older logs (increment page number)
+            isLoadingMoreLogs = true;
+            fetchOlderLogs(currentLogPage + 1, prevScrollHeight);
           }
         }
       });
     }
+  }
+
+  // Function to fetch older logs when scrolling up
+  function fetchOlderLogs(page, prevScrollHeight) {
+    const logsContent = document.getElementById("logs-content");
+    const logsContainer = logsContent.querySelector(".container-logs");
+
+    // Add a loading indicator at the top
+    const loadingIndicator = document.createElement("div");
+    loadingIndicator.className = "loading-indicator";
+    loadingIndicator.textContent = "Loading older logs...";
+    logsContainer.prepend(loadingIndicator);
+
+    fetch(`/container-logs/${containerId}?page=${page}&direction=older`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.text();
+      })
+      .then((data) => {
+        // Remove the loading indicator
+        loadingIndicator.remove();
+
+        if (!data || data.length === 0) {
+          hasMoreLogs = false;
+
+          // Add a "no more logs" indicator if this is the first time we've hit the end
+          if (hasMoreLogs) {
+            const endIndicator = document.createElement("div");
+            endIndicator.className = "end-of-logs";
+            endIndicator.textContent = "No more logs available";
+            logsContainer.prepend(endIndicator);
+          }
+
+          isLoadingMoreLogs = false;
+          return;
+        }
+
+        // Split logs by new lines and prepend them
+        const logLines = data.split("\n");
+
+        // Create a document fragment to hold all new log entries
+        const fragment = document.createDocumentFragment();
+
+        // Add log entries in reverse order to maintain chronological order
+        for (let i = logLines.length - 1; i >= 0; i--) {
+          const log = logLines[i];
+          if (log.trim().length > 0) {
+            const logEntry = document.createElement("div");
+            logEntry.className = "log-entry";
+            logEntry.textContent = log;
+            fragment.appendChild(logEntry);
+          }
+        }
+
+        // Prepend all new log entries at once
+        logsContainer.prepend(fragment);
+
+        // Adjust scroll position to maintain the user's view
+        const newScrollHeight = logsContent.scrollHeight;
+        logsContent.scrollTop = newScrollHeight - prevScrollHeight;
+
+        currentLogPage = page;
+        isLoadingMoreLogs = false;
+      })
+      .catch((error) => {
+        console.error("Error fetching older container logs:", error);
+        loadingIndicator.textContent = `Error loading older logs: ${error.message}`;
+        loadingIndicator.className = "error-indicator";
+        isLoadingMoreLogs = false;
+      });
   }
 
   // Setup tab switching
