@@ -122,14 +122,17 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // Fetch initial container logs
+  // Fetch container logs
   function fetchContainerLogs(page = 1) {
     const logsContent = document.getElementById("logs-content");
 
-    logsContent.innerHTML = '<div class="loading">Loading logs...</div>';
+    if (page === 1) {
+      logsContent.innerHTML = '<div class="loading">Loading logs...</div>';
+    }
+
     isLoadingMoreLogs = true;
 
-    fetch(`/container-logs/${containerId}?page=${page}&direction=newest`)
+    fetch(`/container-logs/${containerId}?page=${page}`)
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
@@ -137,17 +140,23 @@ document.addEventListener("DOMContentLoaded", function () {
         return response.text();
       })
       .then((data) => {
-        logsContent.innerHTML = '<div class="container-logs"></div>';
+        if (page === 1) {
+          logsContent.innerHTML = '<div class="container-logs"></div>';
+        }
+
         const logsContainer = logsContent.querySelector(".container-logs");
 
-        if (!data || data.length === 0) {
-          logsContainer.innerHTML =
-            '<div class="no-logs">No logs available</div>';
+        if (!data || data.trim().length === 0) {
+          if (page === 1) {
+            logsContainer.innerHTML =
+              '<div class="no-logs">No logs available</div>';
+          }
           hasMoreLogs = false;
+          isLoadingMoreLogs = false;
           return;
         }
 
-        // Split logs by new lines and add them
+        // Split logs by new lines and append them correctly
         const logLines = data.split("\n");
         logLines.forEach((log) => {
           if (log.trim().length > 0) {
@@ -158,53 +167,94 @@ document.addEventListener("DOMContentLoaded", function () {
           }
         });
 
-        // Scroll to the bottom to show newest logs first
+        // Scroll to bottom to show newest logs
         logsContainer.scrollTop = logsContainer.scrollHeight;
 
         currentLogPage = page;
         isLoadingMoreLogs = false;
+
+        // After initial load, set up the Intersection Observer
+        if (page === 1) {
+          setupLogScrolling();
+        }
       })
       .catch((error) => {
         console.error("Error fetching container logs:", error);
-        logsContent.innerHTML = `<div class="error">Failed to load logs: ${error.message}</div>`;
+        if (page === 1) {
+          logsContent.innerHTML = `<div class="error">Failed to load logs: ${error.message}</div>`;
+        }
         isLoadingMoreLogs = false;
       });
   }
 
-  // Setup scroll event for infinite scrolling of logs (older logs on scroll up)
+  // Setup log scrolling using Intersection Observer (similar to React implementation)
   function setupLogScrolling() {
     const logsContent = document.getElementById("logs-content");
+    const logsContainer = document.querySelector(".container-logs");
 
-    if (logsContent) {
-      logsContent.addEventListener("scroll", function () {
-        // Check if we're near the top of the scrollable area
-        if (logsContent.scrollTop < 50) {
-          // If we're not already loading and there might be more logs
-          if (!isLoadingMoreLogs && hasMoreLogs) {
-            // Remember current scroll height and position before loading more content
-            const prevScrollHeight = logsContent.scrollHeight;
+    if (!logsContainer) return;
 
-            // Load older logs (increment page number)
-            isLoadingMoreLogs = true;
-            fetchOlderLogs(currentLogPage + 1, prevScrollHeight);
+    // Create and add sentinel element at the top of logs container
+    const sentinel = document.createElement("div");
+    sentinel.className = "logs-sentinel";
+    sentinel.style.height = "5px"; // Small height to be less intrusive
+    sentinel.style.width = "100%";
+    logsContainer.prepend(sentinel);
+
+    // Create Intersection Observer
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          // When sentinel becomes visible and we're not already loading
+          if (entry.isIntersecting && !isLoadingMoreLogs && hasMoreLogs) {
+            // Save height before loading
+            const previousHeight = logsContent.scrollHeight;
+            const previousScrollTop = logsContent.scrollTop;
+
+            // Load previous page of logs
+            fetchPreviousLogs(
+              currentLogPage + 1,
+              previousHeight,
+              previousScrollTop
+            );
           }
-        }
-      });
-    }
+        });
+      },
+      {
+        root: logsContent, // Observe intersection relative to logs content div
+        threshold: 0.1, // Trigger when at least 10% of sentinel is visible
+      }
+    );
+
+    // Start observing the sentinel
+    observer.observe(sentinel);
+
+    // Store observer reference in a global variable so we can disconnect it later if needed
+    window.logsObserver = observer;
   }
 
-  // Function to fetch older logs when scrolling up
-  function fetchOlderLogs(page, prevScrollHeight) {
+  // Function to fetch previous (older) logs
+  function fetchPreviousLogs(page, previousHeight, previousScrollTop) {
     const logsContent = document.getElementById("logs-content");
-    const logsContainer = logsContent.querySelector(".container-logs");
+    const logsContainer = document.querySelector(".container-logs");
+    const sentinel = document.querySelector(".logs-sentinel");
 
-    // Add a loading indicator at the top
+    if (!logsContainer) return;
+
+    // Add loading indicator right after the sentinel
     const loadingIndicator = document.createElement("div");
     loadingIndicator.className = "loading-indicator";
     loadingIndicator.textContent = "Loading older logs...";
-    logsContainer.prepend(loadingIndicator);
 
-    fetch(`/container-logs/${containerId}?page=${page}&direction=older`)
+    if (sentinel && sentinel.nextSibling) {
+      logsContainer.insertBefore(loadingIndicator, sentinel.nextSibling);
+    } else {
+      logsContainer.prepend(loadingIndicator);
+    }
+
+    isLoadingMoreLogs = true;
+
+    fetch(`/container-logs/${containerId}?page=${page}`)
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
@@ -212,54 +262,59 @@ document.addEventListener("DOMContentLoaded", function () {
         return response.text();
       })
       .then((data) => {
-        // Remove the loading indicator
+        // Remove loading indicator
         loadingIndicator.remove();
 
-        if (!data || data.length === 0) {
+        if (!data || data.trim().length === 0) {
           hasMoreLogs = false;
+          const noMoreLogs = document.createElement("div");
+          noMoreLogs.className = "no-more-logs";
+          noMoreLogs.textContent = "No more logs available";
 
-          // Add a "no more logs" indicator if this is the first time we've hit the end
-          if (hasMoreLogs) {
-            const endIndicator = document.createElement("div");
-            endIndicator.className = "end-of-logs";
-            endIndicator.textContent = "No more logs available";
-            logsContainer.prepend(endIndicator);
+          // Insert after sentinel
+          if (sentinel && sentinel.nextSibling) {
+            logsContainer.insertBefore(noMoreLogs, sentinel.nextSibling);
+          } else {
+            logsContainer.prepend(noMoreLogs);
           }
 
           isLoadingMoreLogs = false;
           return;
         }
 
-        // Split logs by new lines and prepend them
-        const logLines = data.split("\n");
-
         // Create a document fragment to hold all new log entries
         const fragment = document.createDocumentFragment();
 
-        // Add log entries in reverse order to maintain chronological order
-        for (let i = logLines.length - 1; i >= 0; i--) {
-          const log = logLines[i];
+        // Split logs by new lines and create entries
+        const logLines = data.split("\n");
+        logLines.forEach((log) => {
           if (log.trim().length > 0) {
             const logEntry = document.createElement("div");
             logEntry.className = "log-entry";
             logEntry.textContent = log;
             fragment.appendChild(logEntry);
           }
+        });
+
+        // Insert all new log entries after the sentinel
+        if (sentinel && sentinel.nextSibling) {
+          logsContainer.insertBefore(fragment, sentinel.nextSibling);
+        } else {
+          // Fallback - just prepend to container
+          logsContainer.prepend(fragment);
         }
 
-        // Prepend all new log entries at once
-        logsContainer.prepend(fragment);
-
-        // Adjust scroll position to maintain the user's view
-        const newScrollHeight = logsContent.scrollHeight;
-        logsContent.scrollTop = newScrollHeight - prevScrollHeight;
+        // After new content is added, adjust scroll position to maintain the view
+        const newHeight = logsContent.scrollHeight;
+        const heightDifference = newHeight - previousHeight;
+        logsContent.scrollTop = previousScrollTop + heightDifference;
 
         currentLogPage = page;
         isLoadingMoreLogs = false;
       })
       .catch((error) => {
-        console.error("Error fetching older container logs:", error);
-        loadingIndicator.textContent = `Error loading older logs: ${error.message}`;
+        console.error("Error fetching previous container logs:", error);
+        loadingIndicator.textContent = `Error loading logs: ${error.message}`;
         loadingIndicator.className = "error-indicator";
         isLoadingMoreLogs = false;
       });
@@ -277,9 +332,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Handle specific tab content loading
         if (tabId === "logs") {
-          // Always fetch logs when logs tab is clicked
+          // Fetch logs when logs tab is clicked (setup scrolling is now handled within fetchContainerLogs)
           fetchContainerLogs();
-          setupLogScrolling();
 
           // Wait a bit for the content to load then scroll to bottom
           setTimeout(() => {
