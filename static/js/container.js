@@ -4,8 +4,8 @@ document.addEventListener("DOMContentLoaded", function () {
     logs: {
       currentPage: 1,
       isLoading: false,
-      hasMoreLogs: true
-    }
+      hasMoreLogs: true,
+    },
   };
 
   // Utility function to get container ID from URL
@@ -82,8 +82,8 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!logData || logData.trim().length === 0) {
           config.logs.hasMoreLogs = false;
 
-          logsView.innerHTML = isInitialLoad 
-            ? '<div class="no-logs">No logs available</div>' 
+          logsView.innerHTML = isInitialLoad
+            ? '<div class="no-logs">No logs available</div>'
             : '<div class="no-more-logs">No more logs available</div>';
           return;
         }
@@ -246,7 +246,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (!data || data.trim().length === 0) {
           if (page === 1) {
-            logsContainer.innerHTML = '<div class="no-logs">No logs available</div>';
+            logsContainer.innerHTML =
+              '<div class="no-logs">No logs available</div>';
           }
           hasMoreLogs = false;
           isLoadingMoreLogs = false;
@@ -413,7 +414,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
           initLogs();
         } else if (tabId === "stats") {
-          console.log("Stats tab clicked - would fetch stats data");
+          fetchContainerStats();
         }
 
         switchTab(tabId, this);
@@ -429,7 +430,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (stopButton) {
       stopButton.addEventListener("click", function () {
-        const isRunning = containerData && containerData.Status.toLowerCase() === "running";
+        const isRunning =
+          containerData && containerData.Status.toLowerCase() === "running";
         const action = isRunning ? "stop" : "start";
         const endpoint = isRunning
           ? `/container-stop/${containerId}`
@@ -487,7 +489,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (deleteButton) {
       deleteButton.addEventListener("click", function () {
-        if (confirm("Are you sure you want to delete this container? This action cannot be undone.")) {
+        if (
+          confirm(
+            "Are you sure you want to delete this container? This action cannot be undone."
+          )
+        ) {
           fetch(`/container/${containerId}`, { method: "DELETE" })
             .then((response) => {
               if (!response.ok) {
@@ -508,6 +514,60 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
+  // Fetch container stats
+  function fetchContainerStats() {
+    const statsContent = document.getElementById("stats-content");
+    const statsContainer = statsContent.querySelector(".container-stats");
+
+    // Show loading state
+    statsContainer.innerHTML = '<div class="loading">Loading stats...</div>';
+
+    fetch(`/container-stats/${containerId}`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((stats) => {
+        // Create stats HTML, excluding ID, Name, and PIDs
+        const statsHTML = `
+            <div class="stat-row">
+              <div class="stat-label">CPU Usage</div>
+              <div class="stat-value">${stats.CPUPerc}</div>
+              <div class="progress-bar">
+                <div class="progress" style="width: ${parseFloat(
+                  stats.CPUPerc
+                )}%;"></div>
+              </div>
+            </div>
+            <div class="stat-row">
+              <div class="stat-label">Memory Usage</div>
+              <div class="stat-value">${stats.MemUsage}</div>
+              <div class="progress-bar">
+                <div class="progress" style="width: ${parseFloat(
+                  stats.MemPerc
+                )}%;"></div>
+              </div>
+            </div>
+            <div class="stat-row">
+              <div class="stat-label">Network I/O</div>
+              <div class="stat-value">${stats.NetIO}</div>
+            </div>
+            <div class="stat-row">
+              <div class="stat-label">Block I/O</div>
+              <div class="stat-value">${stats.BlockIO}</div>
+            </div>
+          `;
+
+        statsContainer.innerHTML = statsHTML;
+      })
+      .catch((error) => {
+        console.error("Error fetching container stats:", error);
+        statsContainer.innerHTML = `<div class="error">Failed to load stats: ${error.message}</div>`;
+      });
+  }
+
   // Initialize container details page
   function initContainerDetails() {
     fetchContainerDetails();
@@ -519,7 +579,9 @@ document.addEventListener("DOMContentLoaded", function () {
     setupInfiniteScroll(logsView);
     loadInitialLogs(logsView);
 
-    const activeLogTab = document.querySelector('.tab-button[data-tab="logs"].active');
+    const activeLogTab = document.querySelector(
+      '.tab-button[data-tab="logs"].active'
+    );
     if (activeLogTab) {
       initLogs();
     }

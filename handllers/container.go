@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"os/exec"
 	"fmt"
 	"io"
 	"net/http"
@@ -182,40 +183,29 @@ func GetContainerLogs(c *gin.Context) {
 func GetContainerStats(c *gin.Context) {
 	containerID := c.Param("id")
 
-	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+	// Use --format "{{json .}}" to get JSON output
+	cmd := exec.Command("docker", "stats", containerID, "--no-stream", "--no-trunc", "--format", "{{json .}}")
+	
+	// Capture the output instead of directing to os.Stdout
+	output, err := cmd.CombinedOutput()
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create Docker client"})
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": fmt.Sprintf("Failed to get container stats: %v", err),
+		})
 		return
 	}
-	defer cli.Close()
-
-	stats, err := cli.ContainerStats(context.Background(), containerID, false)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get container stats"})
+	
+	// Parse the JSON output
+	var statsData map[string]interface{}
+	if err := json.Unmarshal(output, &statsData); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": fmt.Sprintf("Failed to parse stats output: %v", err),
+		})
 		return
 	}
-	defer stats.Body.Close()
-
-	var statsJSON map[string]interface{}
-	if err := json.NewDecoder(stats.Body).Decode(&statsJSON); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to decode stats JSON"})
-		return
-	}
-
-	// Extract required details
-	response := gin.H{
-		"cpu_usage": map[string]interface{}{
-			"total_usage":          statsJSON["cpu_stats"].(map[string]interface{})["cpu_usage"].(map[string]interface{})["total_usage"],
-			"usage_in_usermode":    statsJSON["cpu_stats"].(map[string]interface{})["cpu_usage"].(map[string]interface{})["usage_in_usermode"],
-			"system_cpu_usage":     statsJSON["cpu_stats"].(map[string]interface{})["system_cpu_usage"],
-		},
-		"memory_usage": map[string]interface{}{
-			"usage": statsJSON["memory_stats"].(map[string]interface{})["usage"],
-			"limit": statsJSON["memory_stats"].(map[string]interface{})["limit"],
-		},
-	}
-
-	c.JSON(http.StatusOK, response)
+	
+	// Return the parsed JSON data
+	c.JSON(http.StatusOK, statsData)
 }
 
 // FormatPorts converts Docker's port mapping structure to a human-readable format
