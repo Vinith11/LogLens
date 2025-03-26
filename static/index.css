@@ -1,13 +1,13 @@
 /* Base Styles */
 :root {
-    --bg-color: #0f0f0f;
-    --sidebar-bg: #1a1a1a;
-    --card-bg: #1a1a1a;
+    --bg-color: #000000;
+    --sidebar-bg: #121212;
+    --card-bg: #1c1c1c;
     --text-color: #ffffff;
-    --secondary-text: #cccccc;
-    --border-color: #333333;
-    --active-color: #3a3a3a;
-    --primary-color: #00c853;
+    --secondary-text: #a0a0a0;
+    --border-color: #444444;
+    --active-color: #2c2c2c;
+    --primary-color: #ffffff;
     --progress-bg: #333333;
 }
 
@@ -187,8 +187,36 @@ body {
 }
 
 .status.running {
-    background-color: var(--primary-color);
+    background-color: #2ecc71; /* Green for running status */
     color: #000;
+}
+
+.status.exited {
+    background-color: #e74c3c; /* Green for running status */
+    color: #000;
+}
+
+/* Action Button Colors */
+.action-button.start-button {
+    background-color: #2ecc71; /* Green for start button */
+}
+
+.action-button.stop-button {
+    background-color: #e74c3c; /* Red for stop button */
+}
+
+/* Hover states for additional visual feedback */
+.action-button.start-button:hover {
+    background-color: #27ae60; /* Slightly darker green */
+}
+
+.action-button.stop-button:hover {
+    background-color: #c0392b; /* Slightly darker red */
+}
+
+.status.stopped {
+    background-color: #e74c3c; /* Red for stopped status */
+    color: #fff;
 }
 
 .ports {
@@ -214,8 +242,6 @@ body {
         border-bottom: 1px solid var(--border-color);
     }
 }
-
-/* Add these styles to your existing style.css file */
 
 /* Filter Tabs */
 .filter-tabs {
@@ -256,8 +282,8 @@ body {
 
 /* Status Colors */
 .status.stopped {
-    background-color: #d32f2f;
-    color: #fff;
+    background-color: #ffffff;
+    color: #000;
 }
 
 /* Responsive adjustments */
@@ -270,8 +296,6 @@ body {
         grid-template-columns: 1fr;
     }
 }
-
-/* Add these styles to your existing style.css file */
 
 /* Images Page Styles */
 .images-grid {

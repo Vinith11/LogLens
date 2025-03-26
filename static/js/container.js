@@ -208,7 +208,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Update action buttons based on container status
   function updateActionButtons(status) {
     const stopButton = document.getElementById("stop-button");
-
+  
     if (stopButton) {
       if (status.toLowerCase() === "running") {
         stopButton.innerHTML = '<span class="icon">◼</span><span>Stop</span>';
