@@ -1,158 +1,217 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>LogLens - Container Details</title>
-    <link rel="stylesheet" href="/static/index.css">
-</head>
-<body>
+    <link rel="stylesheet" href="/static/index.css" />
+  </head>
+  <body>
     <div class="app-container">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="logo">
-                <h1>LogLens</h1>
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="logo">
+          <h1>LogLens</h1>
+        </div>
+        <nav class="sidebar-nav">
+          <ul>
+            <li class="nav-item">
+              <a href="../index.html">
+                <span class="icon">⊞</span>
+                <span class="label">Dashboard</span>
+              </a>
+            </li>
+            <li class="nav-item active">
+              <a href="containers.html">
+                <span class="icon">⊡</span>
+                <span class="label">Containers</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="images.html">
+                <span class="icon">⊟</span>
+                <span class="label">Images</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="volumes.html">
+                <span class="icon">⊠</span>
+                <span class="label">Volumes</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="settings.html">
+                <span class="icon">⚙</span>
+                <span class="label">Settings</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <div class="back-button-container">
+          <a href="containers.html" class="back-button">
+            <span class="icon">←</span>
+            <span>Back to containers</span>
+          </a>
+        </div>
+
+        <div class="container-header-section">
+          <h1 class="container-name" id="container-name">wonderful_wozniak</h1>
+          <div class="container-status">
+            <span class="status running" id="container-status">running</span>
+          </div>
+        </div>
+
+        <!-- Container Details Tab Panel -->
+        <div class="container-details-panel">
+          <div class="container-tabs">
+            <button
+              class="tab-button active"
+              data-tab="overview"
+              onclick="switchTab('overview', this)"
+            >
+              Overview
+            </button>
+            <button
+              class="tab-button"
+              data-tab="logs"
+              onclick="switchTab('logs', this)"
+            >
+              Logs
+            </button>
+            <button
+              class="tab-button"
+              data-tab="stats"
+              onclick="switchTab('stats', this)"
+            >
+              Stats
+            </button>
+          </div>
+
+          <!-- Tab Content -->
+          <div class="tab-content active" id="overview-content">
+            <div class="container-details">
+              <div class="detail-row">
+                <div class="detail-label">ID</div>
+                <div class="detail-value">1234567890ab</div>
+              </div>
+              <div class="detail-row">
+                <div class="detail-label">Image</div>
+                <div class="detail-value">nginx:latest</div>
+              </div>
+              <div class="detail-row">
+                <div class="detail-label">Created</div>
+                <div class="detail-value">2023-07-01 10:00:00</div>
+              </div>
+              <div class="detail-row">
+                <div class="detail-label">Ports</div>
+                <div class="detail-value">80/tcp, 443/tcp</div>
+              </div>
             </div>
-            <nav class="sidebar-nav">
-                <ul>
-                    <li class="nav-item">
-                        <a href="../index.html">
-                            <span class="icon">⊞</span>
-                            <span class="label">Dashboard</span>
-                        </a>
-                    </li>
-                    <li class="nav-item active">
-                        <a href="containers.html">
-                            <span class="icon">⊡</span>
-                            <span class="label">Containers</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="images.html">
-                            <span class="icon">⊟</span>
-                            <span class="label">Images</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="volumes.html">
-                            <span class="icon">⊠</span>
-                            <span class="label">Volumes</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="settings.html">
-                            <span class="icon">⚙</span>
-                            <span class="label">Settings</span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-        </aside>
+          </div>
 
-        <!-- Main Content -->
-        <main class="main-content">
-            <div class="back-button-container">
-                <a href="containers.html" class="back-button">
-                    <span class="icon">←</span>
-                    <span>Back to containers</span>
-                </a>
+          <div class="tab-content" id="logs-content">
+            <div class="container-logs">
+              <div class="log-entry">
+                2025-03-18T07:32:43.089Z Log entry 1: Container
+                wonderful_wozniak is running normally.
+              </div>
+              <div class="log-entry">
+                2025-03-18T07:32:43.089Z Log entry 2: Container
+                wonderful_wozniak is running normally.
+              </div>
+              <div class="log-entry">
+                2025-03-18T07:32:43.089Z Log entry 3: Container
+                wonderful_wozniak is running normally.
+              </div>
+              <div class="log-entry">
+                2025-03-18T07:32:43.089Z Log entry 4: Container
+                wonderful_wozniak is running normally.
+              </div>
+              <div class="log-entry">
+                2025-03-18T07:32:43.089Z Log entry 5: Container
+                wonderful_wozniak is running normally.
+              </div>
+              <div class="log-entry">
+                2025-03-18T07:32:43.089Z Log entry 6: Container
+                wonderful_wozniak is running normally.
+              </div>
+              <div class="log-entry">
+                2025-03-18T07:32:43.089Z Log entry 7: Container
+                wonderful_wozniak is running normally.
+              </div>
+              <div class="log-entry">
+                2025-03-18T07:32:43.089Z Log entry 8: Container
+                wonderful_wozniak is running normally.
+              </div>
+              <div class="log-entry">
+                2025-03-18T07:32:43.089Z Log entry 9: Container
+                wonderful_wozniak is running normally.
+              </div>
+              <div class="log-entry">
+                2025-03-18T07:32:43.089Z Log entry 10: Container
+                wonderful_wozniak is running normally.
+              </div>
+              <div class="log-entry">
+                2025-03-18T07:32:43.089Z Log entry 11: Container
+                wonderful_wozniak is running normally.
+              </div>
             </div>
+          </div>
 
-            <div class="container-header-section">
-                <h1 class="container-name" id="container-name">wonderful_wozniak</h1>
-                <div class="container-status">
-                    <span class="status running" id="container-status">running</span>
+          <div class="tab-content" id="stats-content">
+            <div class="container-stats">
+              <div class="stat-row">
+                <div class="stat-row-flex">
+                  <div class="stat-label">CPU Usage</div>
+                  <div class="stat-value">45%</div>
                 </div>
+                <div class="progress-bar">
+                  <div class="progress" style="width: 45%"></div>
+                </div>
+              </div>
+              <div class="stat-row">
+                <div class="stat-row-flex">
+                  <div class="stat-label">Memory Usage</div>
+                  <div class="stat-value">512 MB / 1 GB</div>
+                </div>
+                <div class="progress-bar">
+                  <div class="progress" style="width: 50%"></div>
+                </div>
+              </div>
+              <div class="stat-row-inline">
+                <div class="stat-label">Network I/O</div>
+                <div class="stat-value">1.5 MB / 500 KB</div>
+              </div>
+              <div class="stat-row-inline">
+                <div class="stat-label">Block I/O</div>
+                <div class="stat-value">2.3 MB / 1 MB</div>
+              </div>
             </div>
+          </div>
+        </div>
 
-            <!-- Container Details Tab Panel -->
-            <div class="container-details-panel">
-                <div class="container-tabs">
-                    <button class="tab-button active" data-tab="overview" onclick="switchTab('overview', this)">Overview</button>
-                    <button class="tab-button" data-tab="logs" onclick="switchTab('logs', this)">Logs</button>
-                    <button class="tab-button" data-tab="stats" onclick="switchTab('stats', this)">Stats</button>
-                </div>
-
-                <!-- Tab Content -->
-                <div class="tab-content active" id="overview-content">
-                    <div class="container-details">
-                        <div class="detail-row">
-                            <div class="detail-label">ID</div>
-                            <div class="detail-value">1234567890ab</div>
-                        </div>
-                        <div class="detail-row">
-                            <div class="detail-label">Image</div>
-                            <div class="detail-value">nginx:latest</div>
-                        </div>
-                        <div class="detail-row">
-                            <div class="detail-label">Created</div>
-                            <div class="detail-value">2023-07-01 10:00:00</div>
-                        </div>
-                        <div class="detail-row">
-                            <div class="detail-label">Ports</div>
-                            <div class="detail-value">80/tcp, 443/tcp</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="tab-content" id="logs-content">
-                    <div class="container-logs">
-                        <div class="log-entry">2025-03-18T07:32:43.089Z Log entry 1: Container wonderful_wozniak is running normally.</div>
-                        <div class="log-entry">2025-03-18T07:32:43.089Z Log entry 2: Container wonderful_wozniak is running normally.</div>
-                        <div class="log-entry">2025-03-18T07:32:43.089Z Log entry 3: Container wonderful_wozniak is running normally.</div>
-                        <div class="log-entry">2025-03-18T07:32:43.089Z Log entry 4: Container wonderful_wozniak is running normally.</div>
-                        <div class="log-entry">2025-03-18T07:32:43.089Z Log entry 5: Container wonderful_wozniak is running normally.</div>
-                        <div class="log-entry">2025-03-18T07:32:43.089Z Log entry 6: Container wonderful_wozniak is running normally.</div>
-                        <div class="log-entry">2025-03-18T07:32:43.089Z Log entry 7: Container wonderful_wozniak is running normally.</div>
-                        <div class="log-entry">2025-03-18T07:32:43.089Z Log entry 8: Container wonderful_wozniak is running normally.</div>
-                        <div class="log-entry">2025-03-18T07:32:43.089Z Log entry 9: Container wonderful_wozniak is running normally.</div>
-                        <div class="log-entry">2025-03-18T07:32:43.089Z Log entry 10: Container wonderful_wozniak is running normally.</div>
-                        <div class="log-entry">2025-03-18T07:32:43.089Z Log entry 11: Container wonderful_wozniak is running normally.</div>
-                    </div>
-                </div>
-
-                <div class="tab-content" id="stats-content">
-                    <div class="container-stats">
-                        <div class="stat-row">
-                            <div class="stat-label">CPU Usage</div>
-                            <div class="stat-value">45%</div>
-                            <div class="progress-bar">
-                                <div class="progress" style="width: 45%;"></div>
-                            </div>
-                        </div>
-                        <div class="stat-row">
-                            <div class="stat-label">Memory Usage</div>
-                            <div class="stat-value">512 MB / 1 GB</div>
-                            <div class="progress-bar">
-                                <div class="progress" style="width: 50%;"></div>
-                            </div>
-                        </div>
-                        <div class="stat-row">
-                            <div class="stat-label">Network I/O</div>
-                            <div class="stat-value">1.5 MB / 500 KB</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="container-actions">
-                <button class="action-button stop-button" id="stop-button">
-                    <span class="icon">◼</span>
-                    <span>Stop</span>
-                </button>
-                <button class="action-button restart-button" id="restart-button">
-                    <span class="icon">↻</span>
-                    <span>Restart</span>
-                </button>
-                <button class="action-button delete-button" id="delete-button">
-                    <span class="icon">🗑</span>
-                    <span>Delete</span>
-                </button>
-            </div>
-        </main>
+        <!-- Action Buttons -->
+        <div class="container-actions">
+          <button class="action-button stop-button" id="stop-button">
+            <span class="icon">◼</span>
+            <span>Stop</span>
+          </button>
+          <button class="action-button restart-button" id="restart-button">
+            <span class="icon">↻</span>
+            <span>Restart</span>
+          </button>
+          <button class="action-button delete-button" id="delete-button">
+            <span class="icon">🗑</span>
+            <span>Delete</span>
+          </button>
+        </div>
+      </main>
     </div>
 
     <script src="/static/js/container.js"></script>
-</body>
+  </body>
 </html>

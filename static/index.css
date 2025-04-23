@@ -133,7 +133,18 @@ body {
 
 .progress {
     height: 100%;
-    background-color: var(--primary-color);
+    background-color: #39ff14;
+}
+
+.container-stats .stat-row-inline {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.container-stats .stat-row-inline .stat-label {
+    margin-right: 10px;
 }
 
 /* Running Containers Section */
@@ -487,13 +498,16 @@ body {
 .container-details .detail-value {
     flex: 1;
 }
+
+  
 /* Logs Tab */
 .container-logs {
     background-color: #000;
     border-radius: 4px;
     padding: 15px;
     max-height: 400px;
-    overflow-y: auto;
+    flex-direction: column-reverse;
+    overflow-y: scroll;
 }
 
 .container-logs .log-entry {
@@ -506,17 +520,25 @@ body {
 
 /* Stats Tab */
 .container-stats .stat-row {
+    display: flex;
+    flex-direction: column;
     margin-bottom: 25px;
 }
 
-.container-stats .stat-label {
+.container-stats .stat-row-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 8px;
+}
+
+
+.container-stats .stat-label {
     font-weight: 500;
 }
 
 .container-stats .stat-value {
-    text-align: right;
-    margin-bottom: 8px;
+    color: var(--secondary-text);
 }
 
 .container-actions {
