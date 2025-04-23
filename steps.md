@@ -24,6 +24,12 @@ GOOS=linux GOARCH=amd64 go build -o loglens-linux-amd64 main.go
 Linux armv7l
 GOOS=linux GOARCH=arm GOARM=7 go build -o myapp main.go
 
+Linux arm64
+GOOS=linux GOARCH=arm64 go build -o loglens-linux-arm64 main.go
+chmod +x loglens-linux-arm64
+./loglens-linux-arm64
+
+
 Windows
 GOOS=windows GOARCH=amd64 go build -o loglens-windows-amd64.exe main.go
 loglens-linux-amd64.exe
